@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Three pictures</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">    
+    <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <br><br>
+    <div class="container">
+    <form class="form-horizontal well" id="searchForm" action="#">
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="searchInput">Search:</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" id="searchInput" placeholder="Enter search term">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-7">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </div>     
+   </form>
+   <hr>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+            <h3 id="wikipedia-header">Relevant Wikipedia Links</h3>
+            <ul id="wikipedia-links">Type in an address above and find relevant Wikipedia articles here!</ul>
+            </div>
+            <div class="col-md-3"><img id="img1" alt="Image1 from Wikipedia" src="http://upload.wikimedia.org/wikipedia/en/b/bc/Old_guitarist_chicago.jpg"></div>
+            <div class="col-md-3"><img id="img2" alt="Image2 from Wikipedia" src="http://upload.wikimedia.org/wikipedia/en/3/36/Pablo_Picasso%2C_1909%2C_Femme_assise_%28Sitzende_Frau%29%2C_oil_on_canvas%2C_100_x_80_cm%2C_Staatliche_Museen_zu_Berlin%2C_Neue_Nationalgalerie.jpg"></div>
+            <div class="col-md-3"><img id="img3" alt="Image3 from Wikipedia" src="http://upload.wikimedia.org/wikipedia/en/b/b7/Pablo_Picasso%2C_1913-14%2C_Head_%28T%C3%AAte%29%2C_cut_and_pasted_colored_paper%2C_gouache_and_charcoal_on_paperboard%2C_43.5_x_33_cm%2C_Scottish_National_Gallery_of_Modern_Art%2C_Edinburgh.jpg"></div>
+        </div>
+    </div>
+    </div>
+
+
+    <script src="/static/js/libs/jquery.min.js"></script>
+    <script src="/static/js/script.js"></script>
+    <script
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</body>
+</html>
