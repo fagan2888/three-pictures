@@ -1,17 +1,22 @@
 function loadData() {
 
-    var $body = $('body');
     var $wikiElem = $('#wikipedia-links');
     var $searchInput = $('#searchInput').val();
-    console.log($searchInput);
-    $wikiElem.text("");
 
-    var wikiBaseURL = "http://en.wikipedia.org/w/api.php?format=json&continue=";
-    var opensearchURL = wikiBaseURL + "&action=opensearch&search=" + $searchInput;
+    // clear old data
+    $wikiElem.text("");
+    $("img").attr("src", "");
+
+    // URLs
+    var wikiURL = "http://en.wikipedia.org";
+    var wikiBaseURL = wikiURL + "/w/api.php?" + $.param({format:"json", continue:""});
+    var opensearchURL = wikiBaseURL + "&" + $.param({action:"opensearch", search: $searchInput});
+
     var wikiRequestTimeout = setTimeout(function(){
         $wikiElem.text("failed to get wikipedia resources");
     }, 8000);
 
+    // Get list of articles for input search term
     $.ajax({
         url: opensearchURL,
         dataType: "jsonp",
@@ -19,79 +24,42 @@ function loadData() {
             var articleList = response[1];
             for (var i=0; i < articleList.length; i++) {
                 var articleStr = articleList[i];
-                var url = 'http://en.wikipedia.org/wiki/' + articleStr;
-                $wikiElem.append('<li><a href="' + url + '">' + articleStr + '</a></li>');
+                var url = wikiURL + '/wiki/' + articleStr;
+                // add links to articles in list
+                $('<a>',{
+                    href: url,
+                    text: articleStr
+                }).appendTo($('<li>').appendTo($wikiElem));
             };
-            var imageListURL = wikiBaseURL + "&action=query&prop=images&titles=" + response[1][0];
-            console.log(imageListURL);
+            // Get list of image titles from 1st article (this does not include image URL)
+            var imageListURL = wikiBaseURL + "&" + $.param({action:"query", prop: "images", titles: articleList[0]});
             $.ajax({
                 url: imageListURL,
                 dataType: "jsonp",
                 success: function(response2) {
-                    var values = Object.keys(response2.query.pages).map(function(key){
-                        return response2.query.pages[key];
-                    });
-                    imageList = values[0].images;
-                    console.log(values);
-                    console.log(response2);
-                    image1URL = wikiBaseURL + "&prop=imageinfo&iiprop=url&action=query&titles=" + encodeURIComponent(imageList[1].title);
-                    image2URL = wikiBaseURL + "&prop=imageinfo&iiprop=url&action=query&titles=" + encodeURIComponent(imageList[2].title);
-                    image3URL = wikiBaseURL + "&prop=imageinfo&iiprop=url&action=query&titles=" + encodeURIComponent(imageList[3].title);
-                    $.ajax({
-                        url: image1URL,
-                        dataType: "jsonp",
-                        success: function(response3) {
-                            imageURL = response3["query"]["pages"]["-1"]["imageinfo"][0]["url"];
-                            $("#img1").attr("src", imageURL);
-                            console.log(imageURL);
-                        }
-                    });
-                    $.ajax({
-                        url: image2URL, 
-                        dataType: "jsonp",
-                        success: function(response3) {
-                            imageURL = response3["query"]["pages"]["-1"]["imageinfo"][0]["url"];
-                            $("#img2").attr("src", imageURL);
-                            console.log(imageURL);
-                        }
-                    });
-                    $.ajax({
-                        url: image3URL,
-                        dataType: "jsonp",
-                        success: function(response3) {
-                            imageURL = response3["query"]["pages"]["-1"]["imageinfo"][0]["url"];
-                            $("#img3").attr("src", imageURL);
-                            console.log(imageURL);
-                        }
+                    values = response2.query.pages[Object.keys(response2.query.pages)[0]];
+                    imageList = values.images;
+                    $("img").each(function(index){
+                        imageTitle = imageList[index + 1].title;
+                        imageInfoURL = wikiBaseURL + "&prop=imageinfo&iiprop=url&action=query&titles=" + encodeURIComponent(imageTitle);
+                        var $img = $(this);
+                        // Request image info (which includes URL) for each of first 3 images
+                        $.ajax({
+                            url: imageInfoURL,
+                            dataType: "jsonp",
+                            success: function(response3) {
+                                // use imageURL to set img src tags
+                                imageURL = response3["query"]["pages"]["-1"]["imageinfo"][0]["url"];
+                                $img.attr("src", imageURL);
+                            }
+                        });
                     });
                 }
             });
             clearTimeout(wikiRequestTimeout);
         }
     });
-/*
-    $.ajax({
-        url: wikiURL,
-        dataType: "jsonp",
-        success: function(response) {
-            console.log(response);
-            var articleURL = "http://en.wikipedia.org/w/api.php?format=json&action=query&titles=" + response[1] + "&prop=revisions&rvprop=content";
-            console.log(articleURL);
-            $.ajax({
-                url: articleURL,
-                dataType: "jsonp",
-                success: function(response2) {
-                    console.log(response2);  
-                }
-            });
-            var url = 'http://en.wikipedia.org/wiki/';
-            clearTimeout(wikiRequestTimeout);
-        }
-    });
-*/
     return false;
 };
 
 $('#searchForm').submit(loadData);
-
-// loadData();
